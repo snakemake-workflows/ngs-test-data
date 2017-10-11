@@ -1,1 +1,3 @@
-chrom: MT
+chrom: 21
+# URL to bam used for sampling reads
+bam: https://www.ebi.ac.uk/arrayexpress/files/E-GEUV-1/HG00096.1.M_111124_6.bam

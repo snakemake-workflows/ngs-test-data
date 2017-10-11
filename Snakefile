@@ -33,27 +33,15 @@ rule genome:
         "gzip -d -c {input} > {output}"
 
 
-rule transcripts:
-    input:
-        ann="ref/annotation.chr{chrom}.gtf",
-        seq="ref/genome.chr{chrom}.fa"
-    output:
-        "ref/transcripts.chr{chrom}.fa"
-    conda:
-        "envs/mason.yaml"
-    shell:
-        "mason_splicing --gff-group-by gene_id -ir {input.seq} -ig {input.ann} -o {output}"
-
-
 rule reads:
-    input:
-        "ref/transcripts.chr{chrom}.fa"
     output:
         "reads/{sample}.chr{chrom}.1.fq",
         "reads/{sample}.chr{chrom}.2.fq"
     params:
-        seed=lambda wildcards: hash(wildcards.sample)
+        url=config["bam"],
+        seed=lambda wildcards: abs(hash(wildcards.sample)) % 10000
     conda:
-        "envs/wgsim.yaml"
+        "envs/samtools.yaml"
     shell:
-        "wgsim -S {params.seed} -N 1000 {input} {output}"
+        "samtools bam2fq -1 {output[0]} -2 {output[1]} "
+        "<(samtools view -b -s{params.seed}.2 {params.url} chr{wildcards.chrom})"
