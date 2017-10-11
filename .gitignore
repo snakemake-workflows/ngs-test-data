@@ -17,8 +17,7 @@ scripts/.snakemake*
 !rules
 !rules/*
 !.gitignore
-!reads
-!reads/*
-!ref
-!ref/*
-!.travis.yaml
+!.gitattributes
+!.editorconfig
+!.travis.yml
+!.test
