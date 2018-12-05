@@ -26,11 +26,17 @@ rule annotation:
 
 rule genome:
     input:
-        FTP.remote("ftp://ftp.ensembl.org/pub/release-90/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna_sm.chromosome.{chrom}.fa.gz", static=True, keep_local=True)
+        FTP.remote("ftp.ensembl.org/pub/release-90/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna_sm.chromosome.{chrom}.fa.gz", static=True, keep_local=True)
     output:
         "ref/genome.chr{chrom}.fa"
     shell:
         "gzip -d -c {input} > {output}"
+
+rule transcriptome:
+    output:
+        "ref/transcriptome.chr{chrom}.fa"
+    shell:
+        """wget -O {output} 'http://www.ensembl.org/biomart/martservice?query=<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE Query><Query  virtualSchemaName = "default" formatter = "FASTA" header = "0" uniqueRows = "0" count = "" datasetConfigVersion = "0.6" ><Dataset name = "hsapiens_gene_ensembl" interface = "default" ><Filter name = "chromosome_name" value = "21"/><Attribute name = "ensembl_transcript_id" /><Attribute name = "cdna" /></Dataset></Query>'"""
 
 
 rule reads:
